@@ -1,0 +1,91 @@
+tree: XhhMiniNtuple
+
+output: test.root
+
+selection: 
+    - truth_decay_x > -99999.
+    - n_bhad == 4
+    
+    
+ratio: no
+
+systematics: no
+
+data: no
+
+samples:
+
+    - name    : RSG2000
+      stack   : no
+      overlay : yes
+      path    : /afs/cern.ch/user/l/lazovich/eos2/atlas/user/l/lazovich/microntup/user.lazovich.minintuple.c10_m_2TeV_w_fixedhiggstagger_Boosted4bNTuple.root*/*.root*
+      label   : "G^{ 2 TeV} #rightarrow HH"
+      color   : ROOT.kBlack
+      weights :
+          - "1"
+          - "1"
+    - name    : RSG2750
+      stack   : no
+      overlay : yes
+      path    : /afs/cern.ch/user/l/lazovich/eos2/atlas/user/l/lazovich/microntup/user.lazovich.minintuple.c10_m_2.75TeV_w_fixedhiggstagger_Boosted4bNTuple.root*/*.root*
+      label   : "G^{ 2.75 TeV} #rightarrow HH"
+      color   : ROOT.kBlue
+      weights :
+          - "1"
+          - "1"
+    - name    : RSG1400
+      stack   : no
+      overlay : yes
+      path    : /afs/cern.ch/user/l/lazovich/eos2/atlas/user/l/lazovich/microntup/user.lazovich.minintuple.c10_m_1.4TeV_w_fixedhiggstagger_Boosted4bNTuple.root*/*.root*
+      label   : "G^{ 1.4 TeV} #rightarrow HH"
+      color   : ROOT.kRed
+      weights :
+          - "1"
+          - "1"
+plots:
+
+    - name     : higgs1_trkjet1_num
+      variable : asso_trkjet_num_bquark[0][0]
+      xtitle   : "Number of truth b-quarks, leading track jet"
+      ytitle   : Arb. units
+      bins     : [0, 1, 2, 3, 4, 5]
+    - name     : higgs1_trkjet2_num
+      variable : asso_trkjet_num_bquark[0][1]
+      xtitle   : "Number of truth b-quarks, subleading track jet"
+      ytitle   : Arb. units
+      bins     : [0, 1, 2, 3, 4, 5]
+    - name     : higgs2_trkjet1_num
+      variable : asso_trkjet_num_bquark[1][0]
+      xtitle   : "Number of truth b-quarks, leading track jet"
+      ytitle   : Arb. units
+      bins     : [0, 1, 2, 3, 4, 5]
+    - name     : higgs2_trkjet2_num
+      variable : asso_trkjet_num_bquark[1][1]
+      xtitle   : "Number of truth b-quarks, subleading track jet"
+      ytitle   : Arb. units
+      bins     : [0, 1, 2, 3, 4, 5]
+    - name     : decay_dist
+      variable : TMath::Sqrt(truth_decay_x*truth_decay_x + truth_decay_y*truth_decay_y)
+      xtitle   : "Decay vertex distance (mm)"
+      ytitle   : Arb. units
+      bins     : [0.0, 5.0, 10.0, 15.0, 20.0, 25.0, 30.0, 35.0, 40.0, 45.0, 50.0, 55.0, 60.0]
+    - name     : min_dR
+      variable : min_dR_vertices
+      xtitle   : "Minimum #Delta R between B decay vertices"
+      ytitle   : Arb. units
+      bins     : [0.0, 0.2, 0.4, 0.6, 0.8, 1.0, 1.2, 1.4, 1.6, 1.8, 2.0, 2.2, 2.4, 2.6, 2.8, 3.0, 3.2]
+    - name     : n_higgs_loose
+      variable : n_pass_htagger_loose
+      xtitle   : "# of jets passing H tagger (loose)"
+      ytitle   : Arb. units
+      bins     : [0, 1, 2, 3]
+    - name     : n_higgs_medium
+      variable : n_pass_htagger_medium
+      xtitle   : "# of jets passing H tagger (medium)"
+      ytitle   : Arb. units
+      bins     : [0, 1, 2, 3]
+    - name     : n_higgs_tight
+      variable : n_pass_htagger_tight
+      xtitle   : "# of jets passing H tagger (tight)"
+      ytitle   : Arb. units
+      bins     : [0, 1, 2, 3]

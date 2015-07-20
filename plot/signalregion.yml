@@ -1,0 +1,74 @@
+tree: XhhMicroNTuple
+
+output: signalregion.root
+
+selection: 
+    - 1 > 0
+    - 2 > 0
+
+ratio: no
+
+systematics: no
+
+data: no
+
+samples:
+
+    - name    : JZ3W
+      stack   : yes
+      overlay : no
+      path    : ntuples/mc15_13TeV.361023.*.root
+      label   : QCD (JZ3W)
+      color   : ROOT.kBlue
+      weights :
+          - "1"
+          - "1"
+
+    - name    : JZ4W
+      stack   : yes
+      overlay : no
+      path    : ntuples/mc15_13TeV.361024.*.root
+      label   : QCD (JZ4W)
+      color   : ROOT.kGreen
+      weights :
+          - "1"
+          - "1"
+
+    - name    : RSG1000
+      stack   : no
+      overlay : yes
+      path    : ntuples/mc15_13TeV.301487.*.root
+      label   : "G^{ 1 TeV} #rightarrow HH"
+      color   : ROOT.kBlack
+      weights :
+          - "1"
+
+    - name    : RSG2000
+      stack   : no
+      overlay : yes
+      path    : ntuples/mc15_13TeV.301503.*.root
+      label   : "G^{ 2 TeV} #rightarrow HH"
+      color   : ROOT.kRed
+      weights :
+          - "1"
+
+plots:
+
+    - name     : dijet1_mass
+      variable : dijet1_m/1000
+      xtitle   : "#it{m}(lead dijet) [GeV]"
+      ytitle   : Unit norm. / 20 GeV
+      bins     : [40, 60, 80, 100, 120, 140, 160, 180, 200]
+
+    - name     : dijet2_mass
+      variable : dijet2_m/1000
+      xtitle   : "#it{m}(sub-lead dijet) [GeV]"
+      ytitle   : Unit norm. / 20 GeV
+      bins     : [40, 60, 80, 100, 120, 140, 160, 180, 200]
+
+    - name     : dijet1_dijet2_dphi
+      variable : dphi(dijet1_phi, dijet2_phi)
+      xtitle   : "#Delta#phi(dijets)"
+      ytitle   : Unit norm. / 0.2
+      bins     : [1.4, 1.6, 1.8, 2.0, 2.2, 2.4, 2.6, 2.8, 3.0, 3.2]
+

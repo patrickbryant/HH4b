@@ -1,0 +1,47 @@
+tree: XhhMiniNtuple
+
+output: test.root
+
+selection: 
+    - Pass4Btag
+    - PassControlMass
+    
+    
+ratio: no
+
+systematics: no
+
+data: no
+
+samples:
+
+    - name    : data
+      stack   : no
+      overlay : yes
+      path    : /afs/cern.ch/user/l/lazovich/eos/atlas/user/l/lazovich/microntup/data/data_A4-C4.root
+      label   : "Data (A4-C4)"
+      color   : ROOT.kBlack
+      is_data : yes
+      weights :
+          - "1"
+          - "1"
+
+    - name    : qcd
+      stack   : no
+      overlay : yes
+      path    : ../post_processing/qcd/qcd.root
+      label   : "QCD (d-d)"
+      color   : ROOT.kBlue
+      is_data : no
+      weights :
+          - "mu_qcd*weight_qcd"
+
+plots:
+
+    - name     : mjj
+      variable : inv_mass(calo_jet_pt[0], calo_jet_eta[0], calo_jet_phi[0], calo_jet_m[0], calo_jet_pt[1], calo_jet_eta[1], calo_jet_phi[1], calo_jet_m[1])/1000.0
+      xtitle   : "M_{4b}"
+      ytitle   : Number of events
+      bins     : [0.0, 100.0, 200.0, 300.0, 400.0, 500.0, 600.0, 700.0, 800.0, 900.0, 1000.0, 1100.0, 1200.0, 1300.0, 1400.0, 1500.0, 1600.0, 1700.0, 1800.0]
+      logY     : yes
+    
