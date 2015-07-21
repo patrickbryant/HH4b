@@ -3,9 +3,13 @@ import os
 import ROOT
 
 treename  = "XhhMiniNtuple"
-selection = "Pass2Btag || Pass3Btag"
-selection_mu = "(Pass2Btag || Pass3Btag || Pass4Btag) && PassSidebandMass"
-output    = "qcd.root"
+#selection = "Pass2Btag || Pass3Btag"
+#selection_mu = "(Pass2Btag || Pass3Btag || Pass4Btag) && PassSidebandMass"
+selection = "PassTrackJetEta && (num_pass_btag(asso_trkjet_MV2c20[0][0], asso_trkjet_MV2c20[0][1], asso_trkjet_MV2c20[1][0], asso_trkjet_MV2c20[1][1], -0.9291) == 2 || num_pass_btag(asso_trkjet_MV2c20[0][0], asso_trkjet_MV2c20[0][1], asso_trkjet_MV2c20[1][0], asso_trkjet_MV2c20[1][1], -0.9291) == 3)"
+
+selection_mu = "PassTrackJetEta && (num_pass_btag(asso_trkjet_MV2c20[0][0], asso_trkjet_MV2c20[0][1], asso_trkjet_MV2c20[1][0], asso_trkjet_MV2c20[1][1], -0.9291) == 2 || num_pass_btag(asso_trkjet_MV2c20[0][0], asso_trkjet_MV2c20[0][1], asso_trkjet_MV2c20[1][0], asso_trkjet_MV2c20[1][1], -0.9291) == 3 || num_pass_btag(asso_trkjet_MV2c20[0][0], asso_trkjet_MV2c20[0][1], asso_trkjet_MV2c20[1][0], asso_trkjet_MV2c20[1][1], -0.9291) == 4) && PassSidebandMass"
+
+output    = "qcd_btag90wp.root"
 overwrite = [("Pass2Btag", 0, "I"),
              ("Pass3Btag", 0, "I"),
              ("Pass4Btag", 1, "I"),
@@ -14,6 +18,8 @@ overwrite = [("Pass2Btag", 0, "I"),
 ntupledir = "root://eosatlas//eos/atlas/user/l/lazovich/microntup"
 #datadir   = "user.lazovich.minintuple.data.270806_2_Boosted4bNTuple.root.35336043"
 datadir   = "data"
+
+ROOT.gROOT.Macro("../../plot/helpers.C")
 
 def main():
 
@@ -31,7 +37,7 @@ def main():
         # build
         trees[sample] = ROOT.TChain(treename)
         for fi in files[sample]:
-            trees[sample].Add(fi)
+           trees[sample].Add(fi)
 
         if trees[sample].GetEntries() > 0:
             skims[sample] = trees[sample].CopyTree(selection)
@@ -108,7 +114,7 @@ def get_mu_qcd(tree):
     tree.Draw("runNumber >> tmp_hist", "(" + selection + ")*PassSidebandMass*weight_qcd")
     denom = float(tmp_hist.Integral(0, tmp_hist.GetNbinsX()+1))
 
-    tree.Draw("runNumber >> tmp_hist", "Pass4Btag*PassSidebandMass*weight_qcd")
+    tree.Draw("runNumber >> tmp_hist", "(PassTrackJetEta && (num_pass_btag(asso_trkjet_MV2c20[0][0], asso_trkjet_MV2c20[0][1], asso_trkjet_MV2c20[1][0], asso_trkjet_MV2c20[1][1], -0.9291) == 4))*PassSidebandMass*weight_qcd")
     num = float(tmp_hist.Integral(0, tmp_hist.GetNbinsX()+1))
 
     

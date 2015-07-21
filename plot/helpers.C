@@ -1,7 +1,7 @@
 #include "TMath.h"
 #include "TLorentzVector.h"
 
-helpers() {
+void helpers() {
     cout << "Ran helpers.C" << endl;
     return 0;
 }
@@ -45,5 +45,13 @@ float inv_mass(float pt1, float eta1, float phi1, float m1, float pt2, float eta
 
   return sum.M();
 
+}
+
+int pass_btag(float mv2_score, float threshold){
+  return (int)(mv2_score > threshold);
+}
+
+int num_pass_btag(float mv2_1, float mv2_2, float mv2_3, float mv2_4, float threshold){
+  return pass_btag(mv2_1, threshold) + pass_btag(mv2_2, threshold) + pass_btag(mv2_3, threshold)  + pass_btag(mv2_4, threshold);
 }
 
