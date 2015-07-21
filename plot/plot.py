@@ -133,7 +133,7 @@ def main():
         if plotter["data"]:
             pass
 
-        if plotter["ratio"]:
+        if plotter["ratio"] and stacks.GetStack():
 
             # numerator definition is a placeholder.
             # only works if overlay[0]=data.
@@ -151,6 +151,9 @@ def main():
             canv.SetName(canv.GetName()+"_noratio")
             share.SetName(share.GetName().replace("_share", ""))
             canv = share
+
+        elif plotter["ratio"] and not stacks.GetStack():
+            warn("Want to make ratio plot but dont have stack. Skipping ratio.")
 
         # stack legend
         xleg, yleg = 0.6, 0.7
@@ -194,6 +197,11 @@ def options():
 
 def fatal(message):
     sys.exit("Error in %s: %s" % (__file__, message))
+
+def warn(message):
+    print
+    print "Warning in %s: %s" % (__file__, message)
+    print
 
 if __name__ == "__main__":
     main()
