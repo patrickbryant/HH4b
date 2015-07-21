@@ -96,7 +96,7 @@ def main():
             trees[sample].Draw("%(variable)s >> %(name)s" % draw, "(%(selection)s) * %(weight)s" % draw, "goff")
             output.cd()
             hists[sample].Write()
-            print "(%(selection)s) * %(weight)s" % draw
+#            print "(%(selection)s) * %(weight)s" % draw
             
             #hists[sample].Scale(1/hists[sample].Integral(0, hists[sample].GetNbinsX()))
 
@@ -115,7 +115,7 @@ def main():
                 overlays.Add(copy.copy(hists[sample]), ("ep" if is_data[sample] else "hist"))
 
         # draw
-        maximum = (100.0 if plot["logY"] else 1.5)*max([stacks.GetMaximum(), overlays.GetMaximum("nostack")])
+        maximum = (100.0 if plot["logY"] else 2.0)*max([stacks.GetMaximum(), overlays.GetMaximum("nostack")])
 
         if do_stack:
             stacks.SetMaximum(maximum)
