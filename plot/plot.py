@@ -64,7 +64,8 @@ def main():
 
         hists = {}
         draw = {}
-        draw["bins"]      = array.array("d", plot["bins"])
+        if "bins" in plot:
+            draw["bins"]      = array.array("d", plot["bins"])
         draw["title"]     = ";%s;%s" % (plot["xtitle"], plot["ytitle"])
         draw["variable"]  = plot["variable"]
         draw["selection"] = " && ".join(plotter["selection"])
@@ -85,7 +86,11 @@ def main():
             for option in ["weight"]:
                 draw[option] = "(%s)" % (draw[option])
 
-            hists[sample] = ROOT.TH1F(draw["name"], draw["title"], len(draw["bins"])-1, draw["bins"])
+
+            if "bins" in plot:
+                hists[sample] = ROOT.TH1F(draw["name"], draw["title"], len(draw["bins"])-1, draw["bins"])
+            else:
+                hists[sample] = ROOT.TH1F(draw["name"], draw["title"], plot["n_bins"], plot["bin_low"], plot["bin_high"])
             hists[sample].Sumw2()
 
             trees[sample].Draw("%(variable)s >> %(name)s" % draw, "(%(selection)s) * %(weight)s" % draw, "goff")
