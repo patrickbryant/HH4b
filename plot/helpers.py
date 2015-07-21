@@ -75,7 +75,6 @@ def ratio(name, numer, denom, min, max, ytitle):
     # line10.SetLineStyle(1)
     # line10.Draw()
 
-    canvas.SaveAs("fuck.pdf")
     return canvas
 
 def same_xaxis(name, top_canvas, bottom_canvas, split=0.35, axissep=0.04, ndivs=[505, 503]):
@@ -137,7 +136,6 @@ def same_xaxis(name, top_canvas, bottom_canvas, split=0.35, axissep=0.04, ndivs=
                 else:
                     h.SetLabelSize(h.GetLabelSize("X")*factor, "X")
 
-    canvas.SaveAs("fuck2.pdf")
+    canvas.cd()
     return canvas
 
-    pass
