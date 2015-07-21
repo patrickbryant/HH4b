@@ -115,7 +115,9 @@ def main():
                 overlays.Add(copy.copy(hists[sample]), ("ep" if is_data[sample] else "hist"))
 
         # draw
-        maximum = (100.0 if plot["logY"] else 1.5)*max([stacks.GetMaximum(), overlays.GetMaximum("nostack")])
+        maximum = max([stacks.GetMaximum(), overlays.GetMaximum("nostack")])
+        maximum = maximum*(100.0 if plot["logY"]     else 1.5)
+        maximum = maximum*(1.2   if plotter["ratio"] else 1.0)
 
         if do_stack:
             stacks.SetMaximum(maximum)
@@ -130,6 +132,25 @@ def main():
 
         if plotter["data"]:
             pass
+
+        if plotter["ratio"]:
+
+            # numerator definition is a placeholder.
+            # only works if overlay[0]=data.
+            ratio = helpers.ratio(name   = canv.GetName()+"_ratio",
+                                  numer  = overlays.GetHists()[0],   # AHH KILL ME
+                                  denom  = stacks.GetStack().Last(),
+                                  min    = 0.45,
+                                  max    = 1.55,
+                                  ytitle = "Data / pred."
+                                  )
+            share = helpers.same_xaxis(name          = canv.GetName()+"_share",
+                                       top_canvas    = canv,
+                                       bottom_canvas = ratio,
+                                       )
+            canv.SetName(canv.GetName()+"_noratio")
+            share.SetName(share.GetName().replace("_share", ""))
+            canv = share
 
         # stack legend
         xleg, yleg = 0.6, 0.7
