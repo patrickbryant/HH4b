@@ -93,6 +93,10 @@ def main():
                 hists[sample] = ROOT.TH1F(draw["name"], draw["title"], plot["n_bins"], plot["bin_low"], plot["bin_high"])
             hists[sample].Sumw2()
 
+            if is_data[sample]:
+                hists[sample].SetMarkerStyle(20)
+                hists[sample].SetMarkerSize(1)
+
             trees[sample].Draw("%(variable)s >> %(name)s" % draw, "(%(selection)s) * %(weight)s" % draw, "goff")
             output.cd()
             hists[sample].Write()
@@ -141,7 +145,7 @@ def main():
                                   numer  = overlays.GetHists()[0],   # AHH KILL ME
                                   denom  = stacks.GetStack().Last(),
                                   min    = 0.45,
-                                  max    = 1.55,
+                                  max    = 2.0,
                                   ytitle = "Data / pred."
                                   )
             share = helpers.same_xaxis(name          = canv.GetName()+"_share",
@@ -174,7 +178,7 @@ def main():
         xatlas, yatlas = 0.38, 0.87
         atlas = ROOT.TLatex(xatlas,      yatlas, "ATLAS Internal")
         hh4b  = ROOT.TLatex(xatlas, yatlas-0.06, "X #rightarrow HH #rightarrow 4b")
-        lumi  = ROOT.TLatex(xatlas, yatlas-0.12, "#sqrt{s} = 13 TeV")
+        lumi  = ROOT.TLatex(xatlas, yatlas-0.12, "13 TeV, 78.7 pb^{-1}")
         watermarks = [atlas, hh4b, lumi]
         for wm in watermarks:
             wm.SetTextAlign(22)

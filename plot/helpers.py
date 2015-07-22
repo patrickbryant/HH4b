@@ -64,6 +64,7 @@ def ratio(name, numer, denom, min, max, ytitle):
 
     canvas = ROOT.TCanvas(name, name, 800, 800)
     denomdenom.SetFillColor(ROOT.kAzure-9)
+    denomdenom.SetMarkerSize(0.0)
     denomdenom.Draw("E2, same")
     numerdenom.Draw("PE, same")
 
