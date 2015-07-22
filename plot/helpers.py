@@ -139,3 +139,9 @@ def same_xaxis(name, top_canvas, bottom_canvas, split=0.35, axissep=0.04, ndivs=
     canvas.cd()
     return canvas
 
+def compare(data, pred):
+    ks   = data.KolmogorovTest(pred)
+    chi2 =        data.Chi2Test(pred, "QUW CHI2")
+    ndf  = chi2 / data.Chi2Test(pred, "QUW CHI2/NDF") if chi2 else 0.0
+    return ks, chi2, ndf
+

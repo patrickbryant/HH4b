@@ -179,6 +179,23 @@ def main():
         hh4b  = ROOT.TLatex(xatlas, yatlas-0.06, "X #rightarrow HH #rightarrow 4b")
         lumi  = ROOT.TLatex(xatlas, yatlas-0.12, "#sqrt{s} = 13 TeV")
         watermarks = [atlas, hh4b, lumi]
+
+        # KS, chi2
+        if stacks.GetStack():
+            if plotter.get("ks"):
+                kolg, chi2, ndf = helpers.compare(overlays.GetHists()[0],
+                                                  stacks.GetStack().Last(),
+                                                  ) # AH KILL ME
+                yks   = 0.975
+                ychi2 = 0.975
+                xks   = 0.27
+                xchi2 = 0.55
+                
+                ks = ROOT.TLatex(xks,   yks,   "KS = %5.3f" % (kolg))
+                ch = ROOT.TLatex(xchi2, ychi2, "#chi^{2} / ndf = %.1f / %i" % (chi2, ndf))
+                watermarks += [ks, ch]
+
+        # draw watermarks
         for wm in watermarks:
             wm.SetTextAlign(22)
             wm.SetTextSize(0.04)
