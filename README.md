@@ -17,6 +17,10 @@ To check out:
   <li>git push origin master #to check in the changes</li>
   <li>git commit # only changes my local directory</li>
   <li>git pull origin master # is similar to svn update</li>
+  <li></li>
+  <li>git status #gives you the current status</li>
+  <li>git branch #gives you the current branch</li>
+  <li>git checkout master #checkout branches</li>
 </ul>
 
 To run: <strong>python plot.py —plotter=test.yml</strong>, maybe you need to do <em>eosmount ~/eos</em> first.
