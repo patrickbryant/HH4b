@@ -9,6 +9,10 @@ To check out:
   <li>git remote add upstream https://github.com/lazovich/HH4b.git</li>
   <li>git fetch upstream</li>
   <li>git checkout -b urstreamname</li>
+  
+  <li>git fetch upstream</li>
+  <li>git merge upstream/master</li>
+  
   <li>To commit changes: git push origin betterplot</li>
 </ul>
 
