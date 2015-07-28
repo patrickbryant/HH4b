@@ -57,7 +57,7 @@ def main():
         is_data[name] = sample["is_data"]
 
     # create output file
-    output = ROOT.TFile.Open("plots.%s.canv.root" % (timestamp), "recreate")
+    output = ROOT.TFile.Open("%s/plots.%s.canv.root" % (plotter["directory"], timestamp), "recreate")
 
     # make money
     for plot in plotter["plots"]:
@@ -203,7 +203,7 @@ def main():
             wm.SetNDC()
             wm.Draw()
 
-        canv.SaveAs(canv.GetName()+".pdf")
+        canv.SaveAs(plotter["directory"] + "/" + canv.GetName()+".pdf")
 
         output.Close()
 
