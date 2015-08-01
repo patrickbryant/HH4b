@@ -1,6 +1,8 @@
 tree: XhhMiniNtuple
 
-output: test.root
+directory: output #set the output directory
+
+output: test.root #not useful now
 
 selection: 
     - PassTrackJetEta
@@ -8,23 +10,22 @@ selection:
     - PassControlMass
     
     
-ratio: no
+ratio: no #data MC ratio at the bottom
 
-systematics: no
+systematics: no #not working
 
-data: no
+data: no # not working
 
 samples:
 
     - name    : data
-      stack   : no
-      overlay : yes
-      path    : /afs/cern.ch/user/l/lazovich/eos/atlas/user/l/lazovich/microntup/data/data_A4-C4.root
-      label   : "Data (A4-C4)"
-      color   : ROOT.kBlack
-      is_data : yes
+      stack   : no #stack or not
+      overlay : yes #whether we want to overaly
+      path    : /afs/cern.ch/user/b/btong/eos/atlas/user/l/lazovich/microntup/data/data_A4-C4.root
+      label   : "Data (A4-C4)"#lengend label
+      color   : ROOT.kBlack#legend color
+      is_data : yes#drawn option
       weights :
-          - "1"
           - "1"
 
     - name    : qcd
