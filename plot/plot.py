@@ -25,6 +25,10 @@ def main():
         fatal("Need --plotter for configuration.")
     plotter = yaml.load(open(ops.plotter))
 
+    if not "directory" in plotter:
+        plotter["directory"] = "."
+        warn("No directory given. Writing output to cwd.")
+
     trees   = {}
     plots   = {}
     weights = {}
@@ -57,6 +61,8 @@ def main():
         is_data[name] = sample["is_data"]
 
     # create output file
+    if not os.path.isdir(plotter["directory"]):
+        os.makedirs(plotter["directory"])
     output = ROOT.TFile.Open("%s/plots.%s.canv.root" % (plotter["directory"], timestamp), "recreate")
 
     # make money
@@ -65,7 +71,7 @@ def main():
         hists = {}
         draw = {}
         if "bins" in plot:
-            draw["bins"]      = array.array("d", plot["bins"])
+            draw["bins"]  = array.array("d", plot["bins"])
         draw["title"]     = ";%s;%s" % (plot["xtitle"], plot["ytitle"])
         draw["variable"]  = plot["variable"]
         draw["selection"] = " && ".join(plotter["selection"])
@@ -95,8 +101,7 @@ def main():
 
             trees[sample].Draw("%(variable)s >> %(name)s" % draw, "(%(selection)s) * %(weight)s" % draw, "goff")
             output.cd()
-            hists[sample].Write()
-#            print "(%(selection)s) * %(weight)s" % draw
+            # hists[sample].Write() # todo
             
             #hists[sample].Scale(1/hists[sample].Integral(0, hists[sample].GetNbinsX()))
 
@@ -203,7 +208,7 @@ def main():
             wm.SetNDC()
             wm.Draw()
 
-        canv.SaveAs(plotter["directory"] + "/" + canv.GetName()+".pdf")
+        canv.SaveAs(os.path.join(plotter["directory"], canv.GetName()+".pdf"))
 
         output.Close()
 
