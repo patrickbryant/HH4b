@@ -103,7 +103,7 @@ def main():
             output.cd()
             # hists[sample].Write() # todo
             
-            #hists[sample].Scale(1/hists[sample].Integral(0, hists[sample].GetNbinsX()))
+            # hists[sample].Scale(1/hists[sample].Integral(0, hists[sample].GetNbinsX()))
 
             if stack[sample]:
                 do_stack = True
