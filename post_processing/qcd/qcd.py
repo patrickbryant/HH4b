@@ -111,10 +111,10 @@ def input_mc():
 
 def get_mu_qcd(tree):
     tmp_hist = ROOT.TH1F("tmp_hist", "tmp_hist", 1, 0, 1)
-    tree.Draw("runNumber >> tmp_hist", "(" + selection + ")*PassSidebandMass*weight_qcd")
+    tree.Draw("runNumber >> tmp_hist", "(" + selection + ")*PassSidebandMass*weight_qcd", "goff")
     denom = float(tmp_hist.Integral(0, tmp_hist.GetNbinsX()+1))
 
-    tree.Draw("runNumber >> tmp_hist", "(PassTrackJetEta && (num_pass_btag(asso_trkjet_MV2c20[0][0], asso_trkjet_MV2c20[0][1], asso_trkjet_MV2c20[1][0], asso_trkjet_MV2c20[1][1], -0.9291) == 4))*PassSidebandMass*weight_qcd")
+    tree.Draw("runNumber >> tmp_hist", "(PassTrackJetEta && (num_pass_btag(asso_trkjet_MV2c20[0][0], asso_trkjet_MV2c20[0][1], asso_trkjet_MV2c20[1][0], asso_trkjet_MV2c20[1][1], -0.9291) == 4))*PassSidebandMass*weight_qcd", "goff")
     num = float(tmp_hist.Integral(0, tmp_hist.GetNbinsX()+1))
 
     
