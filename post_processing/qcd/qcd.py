@@ -19,7 +19,7 @@ ntupledir = "root://eosatlas//eos/atlas/user/l/lazovich/microntup"
 #datadir   = "user.lazovich.minintuple.data.270806_2_Boosted4bNTuple.root.35336043"
 datadir   = "data"
 
-ROOT.gROOT.Macro("../../plot/helpers.C")
+ROOT.gROOT.Macro("../../utils/helpers.C")
 
 def main():
 
