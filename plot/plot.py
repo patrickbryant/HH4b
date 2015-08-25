@@ -118,6 +118,9 @@ def main():
                 hists[sample].SetLineWidth(3)
                 overlays.Add(copy.copy(hists[sample]), ("ep" if is_data[sample] else "hist"))
 
+            print hists[sample].Integral(0, hists[sample].GetNbinsX()+1)
+            print hists[sample].GetEntries()
+
         # draw
         maximum = max([stacks.GetMaximum(), overlays.GetMaximum("nostack")])
         maximum = maximum*(100.0 if plot["logY"]     else 2.0)
@@ -126,6 +129,12 @@ def main():
         if do_stack:
             stacks.SetMaximum(maximum)
             stacks.Draw()
+            h1stackerror = copy.copy(stacks.GetStack().Last())
+            h1stackerror.SetName("stat. error")
+            h1stackerror.SetFillColor(ROOT.kGray+3)
+            h1stackerror.SetFillStyle(3005)
+            h1stackerror.SetMarkerStyle(0)
+            h1stackerror.Draw("SAME,E2")
 
         if do_overlay and do_stack:
             overlays.SetMaximum(maximum)
