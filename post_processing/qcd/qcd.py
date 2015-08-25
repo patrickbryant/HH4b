@@ -19,7 +19,7 @@ ntupledir = "root://eosatlas//eos/atlas/user/l/lazovich/microntup"
 #datadir   = "user.lazovich.minintuple.data.270806_2_Boosted4bNTuple.root.35336043"
 datadir   = "data"
 
-ROOT.gROOT.Macro("../../plot/helpers.C")
+ROOT.gROOT.Macro("../../utils/helpers.C")
 
 def main():
 
@@ -111,10 +111,10 @@ def input_mc():
 
 def get_mu_qcd(tree):
     tmp_hist = ROOT.TH1F("tmp_hist", "tmp_hist", 1, 0, 1)
-    tree.Draw("runNumber >> tmp_hist", "(" + selection + ")*PassSidebandMass*weight_qcd")
+    tree.Draw("runNumber >> tmp_hist", "(" + selection + ")*PassSidebandMass*weight_qcd", "goff")
     denom = float(tmp_hist.Integral(0, tmp_hist.GetNbinsX()+1))
 
-    tree.Draw("runNumber >> tmp_hist", "(PassTrackJetEta && (num_pass_btag(asso_trkjet_MV2c20[0][0], asso_trkjet_MV2c20[0][1], asso_trkjet_MV2c20[1][0], asso_trkjet_MV2c20[1][1], -0.9291) == 4))*PassSidebandMass*weight_qcd")
+    tree.Draw("runNumber >> tmp_hist", "(PassTrackJetEta && (num_pass_btag(asso_trkjet_MV2c20[0][0], asso_trkjet_MV2c20[0][1], asso_trkjet_MV2c20[1][0], asso_trkjet_MV2c20[1][1], -0.9291) == 4))*PassSidebandMass*weight_qcd", "goff")
     num = float(tmp_hist.Integral(0, tmp_hist.GetNbinsX()+1))
 
     
