@@ -10,7 +10,7 @@ import time
 import yaml
 
 ROOT.gROOT.SetBatch(True)
-ROOT.gROOT.Macro("helpers.C")
+ROOT.gROOT.Macro("../utils/helpers.C")
 
 timestamp = time.strftime("%Y-%m-%d-%Hh%Mm%Ss")
 
@@ -24,6 +24,10 @@ def main():
     if not ops.plotter:
         fatal("Need --plotter for configuration.")
     plotter = yaml.load(open(ops.plotter))
+
+    if not "directory" in plotter:
+        plotter["directory"] = "."
+        warn("No directory given. Writing output to cwd.")
 
     trees   = {}
     plots   = {}
@@ -57,7 +61,9 @@ def main():
         is_data[name] = sample["is_data"]
 
     # create output file
-    output = ROOT.TFile.Open("plots.%s.canv.root" % (timestamp), "recreate")
+    if not os.path.isdir(plotter["directory"]):
+        os.makedirs(plotter["directory"])
+    output = ROOT.TFile.Open("%s/plots.%s.canv.root" % (plotter["directory"], timestamp), "recreate")
 
     # make money
     for plot in plotter["plots"]:
@@ -65,7 +71,7 @@ def main():
         hists = {}
         draw = {}
         if "bins" in plot:
-            draw["bins"]      = array.array("d", plot["bins"])
+            draw["bins"]  = array.array("d", plot["bins"])
         draw["title"]     = ";%s;%s" % (plot["xtitle"], plot["ytitle"])
         draw["variable"]  = plot["variable"]
         draw["selection"] = " && ".join(plotter["selection"])
@@ -99,10 +105,9 @@ def main():
 
             trees[sample].Draw("%(variable)s >> %(name)s" % draw, "(%(selection)s) * %(weight)s" % draw, "goff")
             output.cd()
-            hists[sample].Write()
-#            print "(%(selection)s) * %(weight)s" % draw
+            # hists[sample].Write() # todo
             
-            #hists[sample].Scale(1/hists[sample].Integral(0, hists[sample].GetNbinsX()))
+            # hists[sample].Scale(1/hists[sample].Integral(0, hists[sample].GetNbinsX()))
 
             if stack[sample]:
                 do_stack = True
@@ -146,7 +151,7 @@ def main():
         if plotter["data"]:
             pass
 
-        if plotter["ratio"]:
+        if plotter["ratio"] and stacks.GetStack():
 
             # numerator definition is a placeholder.
             # only works if overlay[0]=data.
@@ -164,6 +169,9 @@ def main():
             canv.SetName(canv.GetName()+"_noratio")
             share.SetName(share.GetName().replace("_share", ""))
             canv = share
+
+        elif plotter["ratio"] and not stacks.GetStack():
+            warn("Want to make ratio plot but dont have stack. Skipping ratio.")
 
         # stack legend
         xleg, yleg = 0.6, 0.7
@@ -189,6 +197,23 @@ def main():
         hh4b  = ROOT.TLatex(xatlas, yatlas-0.06, "X #rightarrow HH #rightarrow 4b")
         lumi  = ROOT.TLatex(xatlas, yatlas-0.12, "13 TeV, 78.7 pb^{-1}")
         watermarks = [atlas, hh4b, lumi]
+
+        # KS, chi2
+        if stacks.GetStack():
+            if plotter.get("ks"):
+                kolg, chi2, ndf = helpers.compare(overlays.GetHists()[0],
+                                                  stacks.GetStack().Last(),
+                                                  ) # AH KILL ME
+                yks   = 0.975
+                ychi2 = 0.975
+                xks   = 0.27
+                xchi2 = 0.55
+                
+                ks = ROOT.TLatex(xks,   yks,   "KS = %5.3f" % (kolg))
+                ch = ROOT.TLatex(xchi2, ychi2, "#chi^{2} / ndf = %.1f / %i" % (chi2, ndf))
+                watermarks += [ks, ch]
+
+        # draw watermarks
         for wm in watermarks:
             wm.SetTextAlign(22)
             wm.SetTextSize(0.04)
@@ -196,7 +221,7 @@ def main():
             wm.SetNDC()
             wm.Draw()
 
-        canv.SaveAs(canv.GetName()+".pdf")
+        canv.SaveAs(os.path.join(plotter["directory"], canv.GetName()+".pdf"))
 
         output.Close()
 
@@ -207,6 +232,11 @@ def options():
 
 def fatal(message):
     sys.exit("Error in %s: %s" % (__file__, message))
+
+def warn(message):
+    print
+    print "Warning in %s: %s" % (__file__, message)
+    print
 
 if __name__ == "__main__":
     main()

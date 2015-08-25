@@ -3,7 +3,6 @@
 
 void helpers() {
     cout << "Ran helpers.C" << endl;
-    return 0;
 }
 
 float dphi(float phi1, float phi2) {

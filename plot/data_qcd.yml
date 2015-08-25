@@ -1,5 +1,7 @@
 tree: XhhMiniNtuple
 
+directory: output
+
 output: test.root
 
 selection: 
@@ -7,24 +9,22 @@ selection:
     - (num_pass_btag(asso_trkjet_MV2c20[0][0], asso_trkjet_MV2c20[0][1], asso_trkjet_MV2c20[1][0], asso_trkjet_MV2c20[1][1], -0.9291) == 4 || Pass4Btag)
     - PassControlMass
     
-    
-ratio: yes
+ratio: no
 
-systematics: no
+systematics: no # not working
 
-data: no
+data: no # not working
 
 samples:
 
     - name    : data
       stack   : no
       overlay : yes
-      path    : /afs/cern.ch/user/l/lazovich/eos/atlas/user/l/lazovich/microntup/data/data_A4-C4.root
+      path    : /afs/cern.ch/user/b/btong/eos/atlas/user/l/lazovich/microntup/data/data_A4-C4.root
       label   : "Data (A4-C4)"
       color   : ROOT.kBlack
       is_data : yes
       weights :
-          - "1"
           - "1"
 
     - name    : qcd
