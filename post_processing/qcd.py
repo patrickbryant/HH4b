@@ -124,7 +124,6 @@ def main():
 def options():
     parser = argparse.ArgumentParser()
     parser.add_argument("--wp")
-    parser.add_argument("--mu-qcd", action="store_true")
     return parser.parse_args()
 
 def fatal(message):
