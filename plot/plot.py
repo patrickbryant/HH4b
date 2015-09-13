@@ -11,6 +11,7 @@ import yaml
 
 ROOT.gROOT.SetBatch(True)
 ROOT.gROOT.Macro("../utils/helpers.C")
+ROOT.gROOT.Macro("../utils/cross_sections.C")
 
 timestamp = time.strftime("%Y-%m-%d-%Hh%Mm%Ss")
 
