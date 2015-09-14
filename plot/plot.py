@@ -10,7 +10,8 @@ import time
 import yaml
 
 ROOT.gROOT.SetBatch(True)
-ROOT.gROOT.Macro("helpers.C")
+ROOT.gROOT.Macro("../utils/helpers.C")
+ROOT.gROOT.Macro("../utils/cross_sections.C")
 
 timestamp = time.strftime("%Y-%m-%d-%Hh%Mm%Ss")
 
@@ -24,6 +25,10 @@ def main():
     if not ops.plotter:
         fatal("Need --plotter for configuration.")
     plotter = yaml.load(open(ops.plotter))
+
+    if not "directory" in plotter:
+        plotter["directory"] = "."
+        warn("No directory given. Writing output to cwd.")
 
     trees   = {}
     plots   = {}
@@ -57,6 +62,8 @@ def main():
         is_data[name] = sample["is_data"]
 
     # create output file
+    if not os.path.isdir(plotter["directory"]):
+        os.makedirs(plotter["directory"])
     output = ROOT.TFile.Open("%s/plots.%s.canv.root" % (plotter["directory"], timestamp), "recreate")
 
     # make money
@@ -65,7 +72,7 @@ def main():
         hists = {}
         draw = {}
         if "bins" in plot:
-            draw["bins"]      = array.array("d", plot["bins"])
+            draw["bins"]  = array.array("d", plot["bins"])
         draw["title"]     = ";%s;%s" % (plot["xtitle"], plot["ytitle"])
         draw["variable"]  = plot["variable"]
         draw["selection"] = " && ".join(plotter["selection"])
@@ -79,13 +86,12 @@ def main():
         do_stack = False
         do_overlay = False
         
-        for sample in trees:
+        for sample in reversed(sorted(trees.keys())):
 
             draw["name"]   = plot["name"]+"__"+sample
             draw["weight"] = weights[sample]
             for option in ["weight"]:
                 draw[option] = "(%s)" % (draw[option])
-
 
             if "bins" in plot:
                 hists[sample] = ROOT.TH1F(draw["name"], draw["title"], len(draw["bins"])-1, draw["bins"])
@@ -93,12 +99,13 @@ def main():
                 hists[sample] = ROOT.TH1F(draw["name"], draw["title"], plot["n_bins"], plot["bin_low"], plot["bin_high"])
             hists[sample].Sumw2()
 
+            if is_data[sample]:
+                hists[sample].SetMarkerStyle(20)
+                hists[sample].SetMarkerSize(1)
+
             trees[sample].Draw("%(variable)s >> %(name)s" % draw, "(%(selection)s) * %(weight)s" % draw, "goff")
-            output.cd()
-            hists[sample].Write()
-#            print "(%(selection)s) * %(weight)s" % draw
             
-            #hists[sample].Scale(1/hists[sample].Integral(0, hists[sample].GetNbinsX()))
+            # hists[sample].Scale(1/hists[sample].Integral(0, hists[sample].GetNbinsX()))
 
             if stack[sample]:
                 do_stack = True
@@ -114,6 +121,9 @@ def main():
                 hists[sample].SetLineWidth(3)
                 overlays.Add(copy.copy(hists[sample]), ("ep" if is_data[sample] else "hist"))
 
+            print hists[sample].Integral(0, hists[sample].GetNbinsX()+1)
+            print hists[sample].GetEntries()
+
         # draw
         maximum = max([stacks.GetMaximum(), overlays.GetMaximum("nostack")])
         maximum = maximum*(100.0 if plot["logY"]     else 2.0)
@@ -122,6 +132,12 @@ def main():
         if do_stack:
             stacks.SetMaximum(maximum)
             stacks.Draw()
+            h1stackerror = copy.copy(stacks.GetStack().Last())
+            h1stackerror.SetName("stat. error")
+            h1stackerror.SetFillColor(ROOT.kGray+3)
+            h1stackerror.SetFillStyle(3005)
+            h1stackerror.SetMarkerStyle(0)
+            h1stackerror.Draw("SAME,E2")
 
         if do_overlay and do_stack:
             overlays.SetMaximum(maximum)
@@ -141,7 +157,7 @@ def main():
                                   numer  = overlays.GetHists()[0],   # AHH KILL ME
                                   denom  = stacks.GetStack().Last(),
                                   min    = 0.45,
-                                  max    = 1.55,
+                                  max    = 2.0,
                                   ytitle = "Data / pred."
                                   )
             share = helpers.same_xaxis(name          = canv.GetName()+"_share",
@@ -177,7 +193,7 @@ def main():
         xatlas, yatlas = 0.38, 0.87
         atlas = ROOT.TLatex(xatlas,      yatlas, "ATLAS Internal")
         hh4b  = ROOT.TLatex(xatlas, yatlas-0.06, "X #rightarrow HH #rightarrow 4b")
-        lumi  = ROOT.TLatex(xatlas, yatlas-0.12, "#sqrt{s} = 13 TeV")
+        lumi  = ROOT.TLatex(xatlas, yatlas-0.12, "13 TeV, 78.7 pb^{-1}")
         watermarks = [atlas, hh4b, lumi]
 
         # KS, chi2
@@ -203,9 +219,12 @@ def main():
             wm.SetNDC()
             wm.Draw()
 
-        canv.SaveAs(plotter["directory"] + "/" + canv.GetName()+".pdf")
+        canv.SaveAs(os.path.join(plotter["directory"], canv.GetName()+".pdf"))
 
-        output.Close()
+        output.cd()
+        canv.Write() 
+
+    output.Close()
 
 def options():
     parser = argparse.ArgumentParser()
