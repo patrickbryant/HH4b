@@ -86,13 +86,12 @@ def main():
         do_stack = False
         do_overlay = False
         
-        for sample in trees:
+        for sample in reversed(sorted(trees.keys())):
 
             draw["name"]   = plot["name"]+"__"+sample
             draw["weight"] = weights[sample]
             for option in ["weight"]:
                 draw[option] = "(%s)" % (draw[option])
-
 
             if "bins" in plot:
                 hists[sample] = ROOT.TH1F(draw["name"], draw["title"], len(draw["bins"])-1, draw["bins"])
@@ -105,8 +104,6 @@ def main():
                 hists[sample].SetMarkerSize(1)
 
             trees[sample].Draw("%(variable)s >> %(name)s" % draw, "(%(selection)s) * %(weight)s" % draw, "goff")
-            output.cd()
-            # hists[sample].Write() # todo
             
             # hists[sample].Scale(1/hists[sample].Integral(0, hists[sample].GetNbinsX()))
 
@@ -224,7 +221,10 @@ def main():
 
         canv.SaveAs(os.path.join(plotter["directory"], canv.GetName()+".pdf"))
 
-        output.Close()
+        output.cd()
+        canv.Write() 
+
+    output.Close()
 
 def options():
     parser = argparse.ArgumentParser()

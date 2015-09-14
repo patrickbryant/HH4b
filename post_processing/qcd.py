@@ -84,6 +84,9 @@ def main():
         weight = 1 if sample == "data" else -1
         skims[sample] = add_branches(skims[sample], [("weight_qcd", weight, "I")])
 
+    if skims["data"].GetEntries() == 0:
+        fatal("No data entries found. Exiting.")
+
     # merge
     qcd = merge_trees(skims["data"], skims["mc"])
 
