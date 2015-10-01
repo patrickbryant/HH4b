@@ -9,6 +9,7 @@ import copy
 import os
 import sys
 import ROOT
+import glob
 
 treename  = "XhhMiniNtuple"
 
@@ -19,39 +20,54 @@ def main():
 
     ops = options()
 
-    if not ops.wp in ["70", "80", "85", "90"]:
-        fatal("Please give a supported --wp like 70 or 90")
+    if not ops.wp in ["60", "70", "77", "85"]:
+        fatal("Please give a supported --wp like 70 or 77")
 
     # config
     # replace this with Xhh* btagging decisions when ready
-    cuts = {"70": -0.3098,
-            "80": -0.7132,
-            "85": -0.8433,
-            "90": -0.9291,
-            }
-
-    format = {"mv2": "asso_trkjet_MV2c20", 
-              "cut": cuts[ops.wp],
-              }
-    
+        #These are for boosted
+    # cuts = {"70": -0.3098,
+    #         "80": -0.7132,
+    #         "85": -0.8433,
+    #         "90": -0.9291,
+    #         }
+    # format = {"mv2": "asso_trkjet_MV2c20", 
+    #           "cut": cuts[ops.wp],
+    #           }
     # select 2,3,4-tag sample
-    selection = ["n_calo_jets >= 2",
-                 "calo_jet_pt[0] > 350*1000 && abs(calo_jet_eta[0]) < 2.0",
-                 "calo_jet_pt[1] > 250*1000 && abs(calo_jet_eta[1]) < 2.0",
-                 "abs(calo_jet_eta[0] - calo_jet_eta[1]) < 1.7",
-                 "n_asso_track_jets[0] >= 2",
-                 "n_asso_track_jets[1] >= 2",
-                 "asso_trkjet_pt[0][0] > 20*1000 && abs(asso_trkjet_eta[0][0]) < 2.5",
-                 "asso_trkjet_pt[0][1] > 20*1000 && abs(asso_trkjet_eta[0][1]) < 2.5",
-                 "asso_trkjet_pt[1][0] > 20*1000 && abs(asso_trkjet_eta[1][0]) < 2.5",
-                 "asso_trkjet_pt[1][1] > 20*1000 && abs(asso_trkjet_eta[1][1]) < 2.5",
-                 "(%(mv2)s[0][0] > %(cut)s && %(mv2)s[0][1] > %(cut)s) || (%(mv2)s[1][0] > %(cut)s && %(mv2)s[1][1] > %(cut)s)" % format,
-                 ]
-    selection = " && ".join(["(%s)" % sel for sel in selection])
+#    selection = ["n_calo_jets >= 2",
+#                 "calo_jet_pt[0] > 350*1000 && abs(calo_jet_eta[0]) < 2.0",
+#                 "calo_jet_pt[1] > 250*1000 && abs(calo_jet_eta[1]) < 2.0",
+#                 "abs(calo_jet_eta[0] - calo_jet_eta[1]) < 1.7",
+#                 "n_asso_track_jets[0] >= 2",
+#                 "n_asso_track_jets[1] >= 2",
+#                 "asso_trkjet_pt[0][0] > 20*1000 && abs(asso_trkjet_eta[0][0]) < 2.5",
+#                 "asso_trkjet_pt[0][1] > 20*1000 && abs(asso_trkjet_eta[0][1]) < 2.5",
+#                 "asso_trkjet_pt[1][0] > 20*1000 && abs(asso_trkjet_eta[1][0]) < 2.5",
+#                 "asso_trkjet_pt[1][1] > 20*1000 && abs(asso_trkjet_eta[1][1]) < 2.5",
+#                 "(%(mv2)s[0][0] > %(cut)s && %(mv2)s[0][1] > %(cut)s) || (%(mv2)s[1][0] > %(cut)s && %(mv2)s[1][1] > %(cut)s)" % format,
+#                 ]
 
-    fourtag = "%(mv2)s[0][0] > %(cut)s && %(mv2)s[0][1] > %(cut)s && %(mv2)s[1][0] > %(cut)s && %(mv2)s[1][1] > %(cut)s" % format
-    sideband = "PassSidebandMass"
-    
+
+        #these are for resolved
+    cuts = {"60":  0.4496,
+            "70": -0.0436,
+            "77": -0.4434,
+            "85": -0.7887,
+            }
+    format = {"mv2": "", 
+              "cut": cuts[ops.wp],
+              }    
+    selection = ["njets >= 4",
+                 "nbjets >= 2"
+                 ]
+
+    selection = " && ".join(["(%s)" % sel for sel in selection])
+    print selection
+    fourtag = "nbjets == 4"
+    print fourtag
+    sideband = "((dijet1_m - 124*1000)**2 + (dijet2_m - 115)**2)**0.5 > 58"
+#    sideband = " && ".join(["(%s)" % cut for cut in sideband])
     output    = "qcd_%swp.root" % (ops.wp)
     overwrite = [("Pass2Btag", 0, "I"),
                  ("Pass3Btag", 0, "I"),
@@ -69,8 +85,10 @@ def main():
     for sample in ["data", "mc"]:
 
         trees[sample] = ROOT.TChain(treename)
+        print trees[sample],treename,sample
         for fi in files[sample]:
-           trees[sample].Add(fi)
+            print fi
+            trees[sample].Add(fi)
 
         if trees[sample].GetEntries() > 0:
             skims[sample] = trees[sample].CopyTree(selection)
@@ -156,7 +174,7 @@ def add_branches(tree, pairs):
     return tree
 
 def input_data():
-    return ["root://eosatlas//eos/atlas/user/l/lazovich/microntup/data/data_A4-C4.root"]
+    return glob.glob("/afs/cern.ch/work/p/pbryant/miniNTuples/user.pbryant.data15_13TeV.00276330.physics_Main.hh4b_v00-00-00_MiniNTuple.root/user.pbryant.6536797._000001.MiniNTuple.root")
     # return ["/Users/alexandertuna/HH4b_data/data_A4-C4.root"]
 
 def input_mc():
@@ -166,6 +184,7 @@ def get_mu_qcd(tree, fourtag, topo, weight):
     """ 
     If we make this topology-dependent, 
     maybe we return an entire histogram? TBD.
+    topo is "PassSidebandmass" or controlband mass etc?
     """
     numer = ROOT.TH1F("numer", "numer", 1, 0, 1)
     denom = ROOT.TH1F("denom", "denom", 1, 0, 1)

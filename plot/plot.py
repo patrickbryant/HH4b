@@ -41,7 +41,7 @@ def main():
 
     # retrieve inputs
     for sample in plotter["samples"]:
-
+        print sample
         name = sample["name"]
 
         # input trees
@@ -72,7 +72,7 @@ def main():
         hists = {}
         draw = {}
         if "bins" in plot:
-            draw["bins"]  = array.array("d", plot["bins"])
+            draw["bins"]  = array.array("d", [float(x) for x in plot["bins"]])
         draw["title"]     = ";%s;%s" % (plot["xtitle"], plot["ytitle"])
         draw["variable"]  = plot["variable"]
         draw["selection"] = " && ".join(plotter["selection"])
