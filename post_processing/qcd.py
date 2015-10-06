@@ -30,21 +30,21 @@ def main():
             "90": -0.9291,
             }
 
-    format = {"mv2": "asso_trkjet_MV2c20", 
+    format = {"mv2": "jet_ak2track_asso_MV2c20", 
               "cut": cuts[ops.wp],
               }
     
     # select 2,3,4-tag sample
-    selection = ["n_calo_jets >= 2",
-                 "calo_jet_pt[0] > 350*1000 && abs(calo_jet_eta[0]) < 2.0",
-                 "calo_jet_pt[1] > 250*1000 && abs(calo_jet_eta[1]) < 2.0",
-                 "abs(calo_jet_eta[0] - calo_jet_eta[1]) < 1.7",
-                 "n_asso_track_jets[0] >= 2",
-                 "n_asso_track_jets[1] >= 2",
-                 "asso_trkjet_pt[0][0] > 20*1000 && abs(asso_trkjet_eta[0][0]) < 2.5",
-                 "asso_trkjet_pt[0][1] > 20*1000 && abs(asso_trkjet_eta[0][1]) < 2.5",
-                 "asso_trkjet_pt[1][0] > 20*1000 && abs(asso_trkjet_eta[1][0]) < 2.5",
-                 "asso_trkjet_pt[1][1] > 20*1000 && abs(asso_trkjet_eta[1][1]) < 2.5",
+    selection = ["jet_ak10LCtrim_n >= 2",
+                 "jet_ak10LCtrim_pt[0] > 350*1000 && abs(jet_ak10LCtrim_eta[0]) < 2.0",
+                 "jet_ak10LCtrim_pt[1] > 250*1000 && abs(jet_ak10LCtrim_eta[1]) < 2.0",
+                 "abs(jet_ak10LCtrim_eta[0] - jet_ak10LCtrim_eta[1]) < 1.7",
+                 "jet_ak2track_asso_n[0] >= 2",
+                 "jet_ak2track_asso_n[1] >= 2",
+                 "jet_ak2track_asso_pt[0][0] > 20*1000 && abs(jet_ak2track_asso_eta[0][0]) < 2.5",
+                 "jet_ak2track_asso_pt[0][1] > 20*1000 && abs(jet_ak2track_asso_eta[0][1]) < 2.5",
+                 "jet_ak2track_asso_pt[1][0] > 20*1000 && abs(jet_ak2track_asso_eta[1][0]) < 2.5",
+                 "jet_ak2track_asso_pt[1][1] > 20*1000 && abs(jet_ak2track_asso_eta[1][1]) < 2.5",
                  "(%(mv2)s[0][0] > %(cut)s && %(mv2)s[0][1] > %(cut)s) || (%(mv2)s[1][0] > %(cut)s && %(mv2)s[1][1] > %(cut)s)" % format,
                  ]
     selection = " && ".join(["(%s)" % sel for sel in selection])
@@ -156,7 +156,7 @@ def add_branches(tree, pairs):
     return tree
 
 def input_data():
-    return ["root://eosatlas//eos/atlas/user/l/lazovich/microntup/data/data_A4-C4.root"]
+    return ["root://eosatlas//eos/atlas/user/l/lazovich/microntup/patrick_ntup/data_v00-00-00_D3-E3.root"]
     # return ["/Users/alexandertuna/HH4b_data/data_A4-C4.root"]
 
 def input_mc():
