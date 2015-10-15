@@ -1,0 +1,144 @@
+tree: XhhMiniNtuple
+
+directory: resolved/control
+
+output: test.root
+
+selection:
+    - Resolved_njets >= 4
+    - Resolved_nbjets == 4
+    - Resolved_ndijets >= 2
+    - hcand_resolved_pt[0] > 200e3
+    - hcand_resolved_pt[1] > 150e3
+    - ResolvedPass_ControlMass
+
+ratio: no
+
+systematics: no
+
+data: no
+
+samples:
+
+    - name    : data
+      is_data : yes
+      stack   : no
+      overlay : yes
+      path    : /afs/cern.ch/work/p/pbryant/miniNTuples-v00-01-00/group.phys-exotics.data15_13TeV.0027*.physics_Main.hh4b_v00-01-00_MiniNTuple.root/*
+      label   : "Data"
+      color   : ROOT.kBlack
+      weights :
+          - "1"
+
+    - name    : qcd
+      is_data : no
+      stack   : yes
+      overlay : no
+      path    : ../post_processing/qcd_70wp.root
+      label   : "QCD (d-d)"
+      color   : ROOT.kRed-10
+      weights :
+          - "weight_mu_qcd*weight_qcd"
+
+plots:
+
+    - name     : hcand_resolved_dRjj[0]
+      variable : hcand_resolved_dRjj[0]
+      xtitle   : "dR in leading diJet system"
+      ytitle   : Arb. units
+      logY     : no
+      bins     : [0.0, 0.2, 0.4, 0.6, 0.8, 1.0, 1.2, 1.4, 1.6, 1.8, 2.0, 2.2, 2.4, 2.6, 2.8, 3.0, 3.2]
+    - name     : hcand_resolved_dRjj[1]
+      variable : hcand_resolved_dRjj[1]
+      xtitle   : "dR in subleading diJet system"
+      ytitle   : Arb. units
+      logY     : no
+      bins     : [0.0, 0.2, 0.4, 0.6, 0.8, 1.0, 1.2, 1.4, 1.6, 1.8, 2.0, 2.2, 2.4, 2.6, 2.8, 3.0, 3.2]
+    - name     : hcand_resolved_m[0]
+      variable : hcand_resolved_m[0]/1000
+      xtitle   : "lead dijet mass"
+      ytitle   : Arb. units
+      logY     : no
+      n_bins   : 30
+      bin_low  : 0.0
+      bin_high : 300.0
+    - name     : hcand_resolved_m[1]
+      variable : hcand_resolved_m[1]/1000
+      xtitle   : "sublead dijet mass"
+      ytitle   : Arb. units
+      logY     : no
+      n_bins   : 30
+      bin_low  : 0.0
+      bin_high : 300.0
+    - name     : hcand_resolved_pt[0]
+      variable : hcand_resolved_pt[0]/1000
+      xtitle   : "lead dijet pt"
+      ytitle   : Arb. units
+      logY     : no
+      n_bins   : 20
+      bin_low  : 0.0
+      bin_high : 1000.0
+    - name     : hcand_resolved_pt[1]
+      variable : hcand_resolved_pt[1]/1000
+      xtitle   : "sublead dijet pt"
+      ytitle   : Arb. units
+      logY     : no
+      n_bins   : 20
+      bin_low  : 0.0
+      bin_high : 1000.0
+    - name     : jet_ak4emtopo_asso_pt[0][0]
+      variable : jet_ak4emtopo_asso_pt[0][0]/1000
+      xtitle   : "lead dijet lead jet pt"
+      ytitle   : Arb. units
+      logY     : yes
+      n_bins   : 22
+      bin_low  : 0.0
+      bin_high : 1200.0
+    - name     : jet_ak4emtopo_asso_pt[0][1]
+      variable : jet_ak4emtopo_asso_pt[0][1]/1000
+      xtitle   : "lead dijet sublead jet pt"
+      ytitle   : Arb. units
+      logY     : yes
+      n_bins   : 22
+      bin_low  : 0.0
+      bin_high : 1200.0
+    - name     : jet_ak4emtopo_asso_pt[1][0]
+      variable : jet_ak4emtopo_asso_pt[1][0]/1000
+      xtitle   : "sublead dijet lead jet pt"
+      ytitle   : Arb. units
+      logY     : yes
+      n_bins   : 22
+      bin_low  : 0.0
+      bin_high : 1200.0
+    - name     : jet_ak4emtopo_asso_pt[1][1]
+      variable : jet_ak4emtopo_asso_pt[1][1]/1000
+      xtitle   : "sublead dijet sublead jet pt"
+      ytitle   : Arb. units
+      logY     : yes
+      n_bins   : 22
+      bin_low  : 0.0
+      bin_high : 1200.0
+    - name     : m4b
+      variable : inv_mass(hcand_resolved_pt[0], hcand_resolved_eta[0], hcand_resolved_phi[0], hcand_resolved_m[0], hcand_resolved_pt[1], hcand_resolved_eta[1], hcand_resolved_phi[1], hcand_resolved_m[0])/1000
+      xtitle   : "M_{4b} [GeV]"
+      ytitle   : Number of events
+      n_bins   : 22
+      bin_low  : 0.0
+      bin_high : 1200.0
+      logY     : no
+    - name     : nbjets
+      variable : Resolved_nbjets
+      xtitle   : "# of bjets"
+      ytitle   : Arb. units
+      logY     : no
+      n_bins   : 7
+      bin_low  : -0.5
+      bin_high : 6.5
+    - name     : njets
+      variable : Resolved_njets
+      xtitle   : "# of jets"
+      ytitle   : Arb. units
+      logY     : no
+      n_bins   : 13
+      bin_low  : -0.5
+      bin_high : 12.5
