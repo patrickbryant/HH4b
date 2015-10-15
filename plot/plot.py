@@ -51,6 +51,10 @@ def main():
 
         trees[name] = ROOT.TChain(plotter["tree"])
         for path in glob.glob(paths):
+            if len(path) > 100:
+                print "adding file:",path[0:50]+"..."+path[len(path)-50:]
+            else:
+                print "adding file:",path
             trees[name].Add(path)
 
         # misc
@@ -104,7 +108,7 @@ def main():
                 hists[sample].SetMarkerSize(1)
 
             trees[sample].Draw("%(variable)s >> %(name)s" % draw, "(%(selection)s) * %(weight)s" % draw, "goff")
-            
+
             # hists[sample].Scale(1/hists[sample].Integral(0, hists[sample].GetNbinsX()))
 
             if stack[sample]:
@@ -120,9 +124,10 @@ def main():
                 hists[sample].SetLineColor(colors[sample])
                 hists[sample].SetLineWidth(3)
                 overlays.Add(copy.copy(hists[sample]), ("ep" if is_data[sample] else "hist"))
-
-            print hists[sample].Integral(0, hists[sample].GetNbinsX()+1)
-            print hists[sample].GetEntries()
+                
+            print sample
+            print "Integral:",hists[sample].Integral(0, hists[sample].GetNbinsX()+1)
+            print " Entries:",hists[sample].GetEntries()
 
         # draw
         maximum = max([stacks.GetMaximum(), overlays.GetMaximum("nostack")])

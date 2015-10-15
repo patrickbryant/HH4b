@@ -4,10 +4,9 @@ directory: plots
 
 output: test.root
 
-selection: 
-    - PassResolved
-    
-    
+selection:
+    - ResolvedPass_SignalMass
+
 ratio: no
 
 systematics: no
@@ -20,7 +19,7 @@ samples:
       is_data : no
       stack   : no
       overlay : yes
-      path    : ../../M300noPtCut/data-MiniNTuple/sample.root
+      path    : ../../M300/data-MiniNTuple/sample.root
       label   : "G^{ 300 GeV} #rightarrow HH"
       color   : ROOT.kBlack
       weights :
@@ -30,7 +29,7 @@ samples:
       is_data : no
       stack   : no
       overlay : yes
-      path    : ../../M400noPtCut/data-MiniNTuple/mc15_13TeV.301489.MadGraphPythia8EvtGen_A14NNPDF23LO_RS_G_hh_bbbb_c10_M400.merge.DAOD_EXOT8.e3820_s2608_s2183_r6630_r6264_p2406.root
+      path    : ../../M400/data-MiniNTuple/mc15_13TeV.301489.MadGraphPythia8EvtGen_A14NNPDF23LO_RS_G_hh_bbbb_c10_M400.merge.DAOD_EXOT8.e3820_s2608_s2183_r6630_r6264_p2406.root
       label   : "G^{ 400 GeV} #rightarrow HH"
       color   : ROOT.kBlue
       weights :
@@ -40,62 +39,52 @@ samples:
       is_data : no
       stack   : no
       overlay : yes
-      path    : ../../M500noPtCut/data-MiniNTuple/mc15_13TeV.301490.MadGraphPythia8EvtGen_A14NNPDF23LO_RS_G_hh_bbbb_c10_M500.merge.DAOD_EXOT8.e3820_s2608_s2183_r6630_r6264_p2406.root
+      path    : ../../M500/data-MiniNTuple/mc15_13TeV.301490.MadGraphPythia8EvtGen_A14NNPDF23LO_RS_G_hh_bbbb_c10_M500.merge.DAOD_EXOT8.e3820_s2608_s2183_r6630_r6264_p2406.root
       label   : "G^{ 500 GeV} #rightarrow HH"
       color   : ROOT.kRed
       weights :
           - "1"
 
-    - name    : RSG1000
-      is_data : no
-      stack   : no
-      overlay : yes
-      path    : ../../M1000noPtCut/data-MiniNTuple/mc15_13TeV.301495.MadGraphPythia8EvtGen_A14NNPDF23LO_RS_G_hh_bbbb_c10_M1000.merge.DAOD_EXOT8.e3820_s2608_s2183_r6630_r6264_p2406.root
-      label   : "G^{ 1000 GeV} #rightarrow HH"
-      color   : ROOT.kMagenta
-      weights :
-          - "1"
-
 plots:
 
-    - name     : dijet1_dRjet1jet2
-      variable : dijet1_dRjet1jet2
+    - name     : hcand_resolved_dRjj[0]
+      variable : hcand_resolved_dRjj[0]
       xtitle   : "dR in leading diJet system"
       ytitle   : Arb. units
       logY     : no
       bins     : [0.0, 0.2, 0.4, 0.6, 0.8, 1.0, 1.2, 1.4, 1.6, 1.8, 2.0, 2.2, 2.4, 2.6, 2.8, 3.0, 3.2]
-    - name     : dijet2_dRjet1jet2
-      variable : dijet2_dRjet1jet2
+    - name     : hcand_resolved_dRjj[1]
+      variable : hcand_resolved_dRjj[1]
       xtitle   : "dR in subleading diJet system"
       ytitle   : Arb. units
       logY     : no
       bins     : [0.0, 0.2, 0.4, 0.6, 0.8, 1.0, 1.2, 1.4, 1.6, 1.8, 2.0, 2.2, 2.4, 2.6, 2.8, 3.0, 3.2]
-    - name     : dijet1_jet1_pt
-      variable : dijet1_jet1_pt/1000.0
+    - name     : jet_ak4emtopo_asso_pt[0][0]
+      variable : jet_ak4emtopo_asso_pt[0][0]/1000
       xtitle   : "lead dijet lead jet pt"
       ytitle   : Arb. units
       logY     : yes
       n_bins   : 22
       bin_low  : 0.0
       bin_high : 1200.0
-    - name     : dijet1_jet2_pt
-      variable : dijet1_jet2_pt/1000.0
+    - name     : jet_ak4emtopo_asso_pt[0][1]
+      variable : jet_ak4emtopo_asso_pt[0][1]/1000
       xtitle   : "lead dijet sublead jet pt"
       ytitle   : Arb. units
       logY     : yes
       n_bins   : 22
       bin_low  : 0.0
       bin_high : 1200.0
-    - name     : dijet2_jet1_pt
-      variable : dijet2_jet1_pt/1000.0
+    - name     : jet_ak4emtopo_asso_pt[1][0]
+      variable : jet_ak4emtopo_asso_pt[1][0]/1000
       xtitle   : "sublead dijet lead jet pt"
       ytitle   : Arb. units
       logY     : yes
       n_bins   : 22
       bin_low  : 0.0
       bin_high : 1200.0
-    - name     : dijet2_jet2_pt
-      variable : dijet2_jet2_pt/1000.0
+    - name     : jet_ak4emtopo_asso_pt[1][1]
+      variable : jet_ak4emtopo_asso_pt[1][1]/1000
       xtitle   : "sublead dijet sublead jet pt"
       ytitle   : Arb. units
       logY     : yes
@@ -103,7 +92,7 @@ plots:
       bin_low  : 0.0
       bin_high : 1200.0
     - name     : m4b
-      variable : inv_mass(dijet1_pt, dijet1_eta, dijet1_phi, dijet1_m, dijet2_pt, dijet2_eta, dijet2_phi, dijet2_m)/1000.0
+      variable : inv_mass(hcand_resolved_pt[0], hcand_resolved_eta[0], hcand_resolved_phi[0], hcand_resolved_m[0], hcand_resolved_pt[1], hcand_resolved_eta[1], hcand_resolved_phi[1], hcand_resolved_m[0])/1000
       xtitle   : "M_{4b} [GeV]"
       ytitle   : Number of events
       n_bins   : 22
@@ -111,18 +100,18 @@ plots:
       bin_high : 1200.0
       logY     : no
     - name     : nbjets
-      variable : nbjets
+      variable : Resolved_nbjets
       xtitle   : "# of bjets"
       ytitle   : Arb. units
       logY     : no
-      n_bins   : 6
+      n_bins   : 7
       bin_low  : -0.5
-      bin_high : 5.5
+      bin_high : 6.5
     - name     : njets
-      variable : njets
+      variable : Resolved_njets
       xtitle   : "# of jets"
       ytitle   : Arb. units
       logY     : no
-      n_bins   : 6
+      n_bins   : 13
       bin_low  : -0.5
-      bin_high : 5.5
+      bin_high : 12.5

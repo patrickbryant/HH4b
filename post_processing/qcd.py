@@ -58,21 +58,20 @@ def main():
     format = {"mv2": "", 
               "cut": cuts[ops.wp],
               }    
-    selection = ["njets >= 4",
-                 "nbjets >= 2"
+    selection = ["Resolved_njets >= 4",
+                 "Resolved_nbjets >= 2",
+                 "Resolved_ndijets >= 2",
+                 "hcand_resolved_pt[0] > 200e3",
+                 "hcand_resolved_pt[1] > 150e3",                 
                  ]
 
     selection = " && ".join(["(%s)" % sel for sel in selection])
     print selection
-    fourtag = "nbjets == 4"
+    fourtag = "Resolved_nbjets == 4"
     print fourtag
-    sideband = "((dijet1_m - 124*1000)**2 + (dijet2_m - 115)**2)**0.5 > 58"
-#    sideband = " && ".join(["(%s)" % cut for cut in sideband])
+    sideband = "ResolvedPass_SidebandMass"
     output    = "qcd_%swp.root" % (ops.wp)
-    overwrite = [("Pass2Btag", 0, "I"),
-                 ("Pass3Btag", 0, "I"),
-                 ("Pass4Btag", 1, "I"),
-                 ]
+    overwrite = [("Resolved_nbjets", 4, "I")]
 
     files = {}
     trees = {}
@@ -91,35 +90,48 @@ def main():
             trees[sample].Add(fi)
 
         if trees[sample].GetEntries() > 0:
+            print "Copying Tree:",sample
             skims[sample] = trees[sample].CopyTree(selection)
         else:
             skims[sample] = trees[sample]
             continue
 
-        for name, value, type in overwrite:
-            skims[sample].SetBranchStatus(name, 0)
+#        for name, value, type in overwrite:
+#            skims[sample].SetBranchStatus(name, 0)
 
         weight = 1 if sample == "data" else -1
         skims[sample] = add_branches(skims[sample], [("weight_qcd", weight, "I")])
 
     if skims["data"].GetEntries() == 0:
         fatal("No data entries found. Exiting.")
-
+        
     # merge
+    print "Merging:"
+    print "   Data,",skims["data"]
+    print "     MC,",skims["mc"]
     qcd = merge_trees(skims["data"], skims["mc"])
-
+    
     # derive mu_qcd and uncertainty
+    print "Deriving mu_qcd"
     mu_qcd, mu_qcd_stat = get_mu_qcd(qcd, fourtag=fourtag, topo=sideband, weight="weight_qcd")
+
+    # discard the 4-tag region
+    print "Discard 4-tag region"
+    qcd = qcd.CopyTree("!(%s)" % (fourtag))
+
+    for name, value, type in overwrite:#FIXME hack to get nbjets branch to overwrite
+        qcd.SetBranchStatus(name, 0)
+    qcd = merge_trees(qcd,skims["mc"])
+
+    # update branches
     overwrite.append(("weight_mu_qcd",      mu_qcd,      "F"))
     overwrite.append(("weight_mu_qcd_stat", mu_qcd_stat, "F"))
 
-    # discard the 4-tag region
-    qcd = qcd.CopyTree("!(%s)" % (fourtag))
-
-    # update branches
+    print "Update Branches"
     qcd = add_branches(qcd, overwrite)
 
     # write
+    print "Write output file:",output
     outfile = ROOT.TFile.Open(output, "recreate")
     outfile.cd()
     qcd.Write()
@@ -153,7 +165,11 @@ def fatal(message):
 def merge_trees(skims_data, skims_mc):
     inputs = ROOT.TList()
     inputs.Add(skims_data)
-    inputs.Add(skims_mc)
+    if skims_mc.GetEntries():
+        inputs.Add(skims_mc)
+        print "Adding MC to data"
+    else:
+        print "MC is empty, just using data"
     dummy = ROOT.TTree(treename, treename)
 
     return dummy.MergeTrees(inputs)
@@ -174,7 +190,9 @@ def add_branches(tree, pairs):
     return tree
 
 def input_data():
-    return glob.glob("/afs/cern.ch/work/p/pbryant/miniNTuples/user.pbryant.data15_13TeV.00276330.physics_Main.hh4b_v00-00-00_MiniNTuple.root/user.pbryant.6536797._000001.MiniNTuple.root")
+#    return glob.glob("/afs/cern.ch/work/p/pbryant/miniNTuples/user.pbryant.data15_13TeV.00276330.physics_Main.hh4b_v00-00-00_MiniNTuple.root/user.pbryant.6536797._000001.MiniNTuple.root")
+    return glob.glob("/afs/cern.ch/work/p/pbryant/miniNTuples-v00-01-00/group.phys-exotics.data15_13TeV.0027*.physics_Main.hh4b_v00-01-00_MiniNTuple.root/*")
+    #return glob.glob("../../M500/data-MiniNTuple/mc15_13TeV.301490.MadGraphPythia8EvtGen_A14NNPDF23LO_RS_G_hh_bbbb_c10_M500.merge.DAOD_EXOT8.e3820_s2608_s2183_r6630_r6264_p2406.root")
     # return ["/Users/alexandertuna/HH4b_data/data_A4-C4.root"]
 
 def input_mc():
